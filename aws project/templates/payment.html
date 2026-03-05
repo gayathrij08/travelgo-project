@@ -1,139 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Payment</title>
-
-    <link rel="stylesheet" href="css/style.css">
+    <title>Payment | TravelGo</title>
 
     <style>
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: Arial;
             background: linear-gradient(to right, #0d47a1, #1976d2);
-        }
-
-        .box {
-            background: white;
-            width: 380px;
-            margin: 60px auto;
-            padding: 30px;
-            border-radius: 12px;
+            color: white;
             text-align: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         }
 
-        h2 {
-            color: #0d47a1;
-            margin-bottom: 10px;
-        }
-
-        #amount {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #333;
-            font-weight: bold;
+        .container {
+            background: white;
+            color: black;
+            width: 400px;
+            margin: 80px auto;
+            padding: 30px;
+            border-radius: 10px;
         }
 
         input {
-            width: 100%;
-            padding: 12px;
+            width: 90%;
+            padding: 10px;
             margin: 10px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-
-        .row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .row input {
-            width: 50%;
         }
 
         button {
-            width: 100%;
-            padding: 12px;
             background: #0d47a1;
             color: white;
+            padding: 10px 20px;
             border: none;
-            border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background: #1565c0;
-        }
-
-        .secure {
-            font-size: 12px;
-            color: gray;
-            margin-top: 10px;
         }
     </style>
 </head>
 
 <body>
 
-<div class="box">
-    <h2>Secure Checkout</h2>
-    <p>Complete your booking safely</p>
+<div class="container">
+    <h2>💳 Payment Page</h2>
 
-    <p id="amount"></p>
+    <p><strong>Airline:</strong> {{ booking.airline }}</p>
+    <p><strong>From:</strong> {{ booking.from }}</p>
+    <p><strong>To:</strong> {{ booking.to }}</p>
+    <p><strong>Price:</strong> ₹{{ booking.price }}</p>
 
-   <form onsubmit="makePayment(event)">
+    <form action="/confirm_payment" method="POST">
+
+        <!-- Hidden booking data -->
+        <input type="hidden" name="airline" value="{{ booking.airline }}">
+        <input type="hidden" name="from" value="{{ booking.from }}">
+        <input type="hidden" name="to" value="{{ booking.to }}">
+        <input type="hidden" name="date" value="{{ booking.date }}">
+        <input type="hidden" name="price" value="{{ booking.price }}">
+
+        <!-- Fake Payment Fields -->
         <input type="text" placeholder="Card Number" required>
         <input type="text" placeholder="Card Holder Name" required>
-
-        <div class="row">
-            <input type="text" placeholder="MM/YY" required>
-            <input type="text" placeholder="CVV" required>
-        </div>
+        <input type="text" placeholder="Expiry (MM/YY)" required>
+        <input type="password" placeholder="CVV" required>
 
         <button type="submit">Pay Now</button>
     </form>
-
-    <p class="secure">🔒 Secure Payment</p>
 </div>
-
-<script>
-let price = localStorage.getItem("price");
-
-document.getElementById("amount").innerText = "Amount: ₹" + price;
-
-function payNow(event) {
-    event.preventDefault();
-
-    alert("Payment Successful ✅");
-
-    window.location.href = "my_bookings.html";
-}
-</script>
-<script>
-function makePayment(event) {
-    event.preventDefault();
-
-    let amount = localStorage.getItem("amount") || 4500;
-
-    let booking = {
-        airline: "Indigo",
-        from: "Hyderabad",
-        to: "Bangalore",
-        price: amount,
-        date: new Date().toLocaleDateString()
-    };
-
-    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-    bookings.push(booking);
-
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-
-    alert("Payment Successful 🎉");
-
-    window.location.href = "my_bookings.html";
-}
-</script>
 
 </body>
 </html>

@@ -55,13 +55,17 @@
 <div class="box">
     <h2>Create Account</h2>
 
-    <form>
-        <input type="email" placeholder="Enter Email" required>
-        <input type="password" placeholder="Create Password" required>
+    <form action="{{ url_for('signup') }}" method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+
         <button type="submit">Sign Up</button>
     </form>
 
-    <p>Already have an account? <a href="login.html">Login</a></p>
+    <p>Already have an account? 
+        <a href="{{ url_for('login') }}">Login</a>
+    </p>
 </div>
 
 </body>

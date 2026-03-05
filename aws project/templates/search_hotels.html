@@ -2,90 +2,79 @@
 <html>
 <head>
     <title>Search Hotels</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .card button {
+            background: #0d47a1;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .card button:hover {
+            background: #1565c0;
+        }
+    </style>
 </head>
 
-<body class="hotels-bg">
+<body>
 
 <div class="header">
     <div class="logo">TravelGo</div>
-    <a class="logout" href="home.html">Back</a>
+    <a class="logout" href="/dashboard">Back</a>
 </div>
 
 <div class="search-container">
     <h2>Search Hotels 🏨</h2>
 
-    <form onsubmit="searchHotels(event)">
-        <input type="text" id="city" placeholder="Enter City" required>
-
-        <select id="type">
-            <option value="Luxury">Luxury</option>
-            <option value="Budget">Budget</option>
-            <option value="Family">Family</option>
-        </select>
+    <form method="POST" action="/hotels">
+        <input type="text" name="city" placeholder="Enter City" required>
+        <input type="date" name="checkin" required>
+        <input type="date" name="checkout" required>
 
         <button type="submit">Search</button>
     </form>
 </div>
 
-<div id="results" class="results"></div>
+<!-- ✅ CLEAN GRID -->
+<div class="container">
 
-<script>
-function searchHotels(event) {
-    event.preventDefault();
+{% if hotels %}
+    {% for hotel in hotels %}
+    <div class="card">
+        <h3>{{ hotel.name }}</h3>
+        <p><strong>City:</strong> {{ hotel.city }}</p>
+        <p><strong>Price:</strong> ₹{{ hotel.price }}</p>
 
-    let city = document.getElementById("city").value;
-    let type = document.getElementById("type").value;
+        <form method="POST" action="/book_hotel">
+            <input type="hidden" name="name" value="{{ hotel.name }}">
+            <input type="hidden" name="price" value="{{ hotel.price }}">
 
-    let output = "";
+            <button type="submit">Book Now</button>
+        </form>
+    </div>
+    {% endfor %}
+{% endif %}
 
-    if (type === "Luxury") {
-        output += `
-        <div class="card">
-            <h3>5⭐ Hotel in ${city}</h3>
-            <p>Type: Luxury</p>
-            <p>Price: ₹8000</p>
-            <button onclick="bookHotel('Luxury Hotel', 8000)">Book Now</button>
-        </div>`;
-    }
-
-    if (type === "Budget") {
-        output += `
-        <div class="card">
-            <h3>Budget Stay in ${city}</h3>
-            <p>Type: Budget</p>
-            <p>Price: ₹2000</p>
-            <button onclick="bookHotel('Budget Hotel', 2000)">Book Now</button>
-        </div>`;
-    }
-
-    if (type === "Family") {
-        output += `
-        <div class="card">
-            <h3>Family Resort in ${city}</h3>
-            <p>Type: Family</p>
-            <p>Price: ₹5000</p>
-            <button onclick="bookHotel('Family Resort', 5000)">Book Now</button>
-        </div>`;
-    }
-
-    document.getElementById("results").innerHTML = output;
-}
-
-function bookHotel(name, price) {
-    let booking = {
-        airline: name,
-        price: price,
-        date: new Date().toLocaleDateString()
-    };
-
-    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-    bookings.push(booking);
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-
-    alert("Hotel booked successfully ✅");
-}
-</script>
+</div>
 
 </body>
 </html>

@@ -2,74 +2,78 @@
 <html>
 <head>
     <title>Search Buses</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .card button {
+            background: #0d47a1;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .card button:hover {
+            background: #1565c0;
+        }
+    </style>
 </head>
 
-<body class="bus-bg">
+<body>
 
 <div class="header">
     <div class="logo">TravelGo</div>
-    <a class="logout" href="home.html">Back</a>
+    <a class="logout" href="/dashboard">Back</a>
 </div>
 
 <div class="search-container">
     <h2>Search Buses 🚌</h2>
 
-    <form onsubmit="searchBus(event)">
-        <input type="text" id="from" placeholder="From City" required>
-        <input type="text" id="to" placeholder="To City" required>
-        <input type="date" required>
+    <form method="POST" action="/buses">
+        <input type="text" name="from" placeholder="From City" required>
+        <input type="text" name="to" placeholder="To City" required>
 
         <button type="submit">Search</button>
     </form>
 </div>
 
-<div id="results" class="results"></div>
+<!-- ✅ CLEAN GRID -->
+<div class="container">
 
-<script>
-function searchBus(event) {
-    event.preventDefault();
+{% if buses %}
+    {% for bus in buses %}
+    <div class="card">
+        <h3>{{ bus.from }} → {{ bus.to }}</h3>
+        <p><strong>Bus:</strong> {{ bus.name }}</p>
+        <p><strong>Price:</strong> ₹{{ bus.price }}</p>
 
-    let output = `
-        <div class="card">
-            <h3>Hyderabad → Bangalore</h3>
-            <p>Bus: VRL Travels</p>
-            <p>Seat: Sleeper</p>
-            <p>Price: ₹1200</p>
-            <button onclick="selectSeat()">Select Seat</button>
-        </div>
-    `;
+        <form method="POST" action="/book_bus">
+            <input type="hidden" name="name" value="{{ bus.name }}">
+            <input type="hidden" name="price" value="{{ bus.price }}">
 
-    document.getElementById("results").innerHTML = output;
-}
+            <button type="submit">Book Now</button>
+        </form>
+    </div>
+    {% endfor %}
+{% endif %}
 
-function selectSeat() {
-    let seats = `
-        <div class="card">
-            <h3>Select Seat 🪑</h3>
-            <button onclick="bookBus('Seat 1', 1200)">Seat 1</button>
-            <button onclick="bookBus('Seat 2', 1200)">Seat 2</button>
-            <button onclick="bookBus('Seat 3', 1200)">Seat 3</button>
-        </div>
-    `;
-
-    document.getElementById("results").innerHTML = seats;
-}
-
-function bookBus(seat, price) {
-    let booking = {
-        airline: "Bus - " + seat,
-        price: price,
-        date: new Date().toLocaleDateString()
-    };
-
-    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-    bookings.push(booking);
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-
-    alert("Bus booked successfully ✅");
-}
-</script>
+</div>
 
 </body>
 </html>
