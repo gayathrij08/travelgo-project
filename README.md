@@ -26,4 +26,4 @@ TravelGo is a simple and user-friendly web application that allows users to sear
 
 ---
 
-## 📁 Project Structure
+
