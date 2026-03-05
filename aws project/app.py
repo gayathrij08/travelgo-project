@@ -1,26 +1,22 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "mysecret123"
 
-# MongoDB Connection
-client = MongoClient("mongodb+srv://bhavanisuravaram:bhavani@cluster0.fnpuf.mongodb.net/?retryWrites=true&w=majority")
-db = client["studentDB"]
-
-users = db["users"]
-bookings_collection = db["bookings"]   # ✅ FIXED
+# ✅ TEMP STORAGE (instead of MongoDB)
+users = []
+bookings = []
 
 # -------------------- ROUTES --------------------
 
-# Login Page
 @app.route('/')
 def home():
     return render_template("login.html")
 
 
-# Login User
+# -------------------- LOGIN --------------------
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -28,10 +24,11 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        user = users.find_one({"email": email})
+        # find user in list
+        user = next((u for u in users if u["email"] == email), None)
 
         if user and check_password_hash(user['password'], password):
-            session['user'] = email   # ✅ STORE EMAIL (IMPORTANT)
+            session['user'] = email
             return redirect(url_for('dashboard'))
         else:
             return render_template("login.html", error="Invalid Email or Password")
@@ -39,26 +36,25 @@ def login():
     return redirect(url_for('home'))
 
 
-# Signup
+# -------------------- SIGNUP --------------------
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-
     if request.method == "POST":
 
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
 
-        existing_user = users.find_one({"email": email})
+        # check existing
+        existing_user = next((u for u in users if u["email"] == email), None)
         if existing_user:
             return render_template("signup.html", error="Email already exists")
 
-        hashed_password = generate_password_hash(password)
-
-        users.insert_one({
+        users.append({
             "username": username,
             "email": email,
-            "password": hashed_password
+            "password": generate_password_hash(password)
         })
 
         return redirect(url_for('home'))
@@ -66,17 +62,18 @@ def signup():
     return render_template("signup.html")
 
 
-# Dashboard
+# -------------------- DASHBOARD --------------------
+
 @app.route('/dashboard')
 def dashboard():
-
     if 'user' in session:
         return render_template("home.html", username=session['user'])
     else:
         return redirect(url_for('home'))
 
 
-# Logout
+# -------------------- LOGOUT --------------------
+
 @app.route('/logout')
 def logout():
     session.pop('user', None)
@@ -120,7 +117,8 @@ def flights():
     return render_template("search_flights.html", flights=None)
 
 
-# Book Flight
+# -------------------- BOOK FLIGHT --------------------
+
 @app.route("/book", methods=["POST"])
 def book():
     if "user" not in session:
@@ -136,19 +134,40 @@ def book():
 
     return render_template("payment.html", booking=booking)
 
-# -------------------- BOOKINGS --------------------
+
+# -------------------- CONFIRM PAYMENT --------------------
+
+@app.route("/confirm_payment", methods=["POST"])
+def confirm_payment():
+    if "user" not in session:
+        return redirect("/login")
+
+    booking = {
+        "email": session["user"],
+        "airline": request.form.get("airline"),
+        "price": request.form.get("price"),
+        "from": request.form.get("from"),
+        "to": request.form.get("to"),
+        "date": request.form.get("date")
+    }
+
+    bookings.append(booking)
+
+    return redirect("/my_bookings")
+
+
+# -------------------- MY BOOKINGS --------------------
 
 @app.route("/my_bookings")
 def my_bookings():
-
     if "user" not in session:
         return redirect("/login")
 
     user_email = session["user"]
 
-    bookings = list(bookings_collection.find({"email": user_email}))
+    user_bookings = [b for b in bookings if b["email"] == user_email]
 
-    return render_template("my_bookings.html", bookings=bookings)
+    return render_template("my_bookings.html", bookings=user_bookings)
 
 
 # -------------------- HOTELS --------------------
@@ -174,10 +193,7 @@ def hotels():
 
 @app.route("/book_hotel", methods=["POST"])
 def book_hotel():
-    name = request.form["name"]
-    price = request.form["price"]
-
-    return f"Hotel {name} booked successfully! ₹{price}"
+    return "Hotel booked successfully!"
 
 
 # -------------------- BUSES --------------------
@@ -204,28 +220,7 @@ def buses():
 
 @app.route("/book_bus", methods=["POST"])
 def book_bus():
-    name = request.form["name"]
-    price = request.form["price"]
-
-    return f"Bus {name} booked successfully! ₹{price}"
-
-@app.route("/confirm_payment", methods=["POST"])
-def confirm_payment():
-    if "user" not in session:
-        return redirect("/login")
-
-    booking = {
-        "email": session["user"],
-        "airline": request.form.get("airline"),
-        "price": request.form.get("price"),
-        "from": request.form.get("from"),
-        "to": request.form.get("to"),
-        "date": request.form.get("date")
-    }
-
-    db.bookings.insert_one(booking)
-
-    return redirect("/my_bookings")
+    return "Bus booked successfully!"
 
 
 # -------------------- RUN --------------------
