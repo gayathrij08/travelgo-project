@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Buses</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bus-bg">
+
+<div class="header">
+    <div class="logo">TravelGo</div>
+    <a class="logout" href="home.html">Back</a>
+</div>
+
+<div class="search-container">
+    <h2>Search Buses 🚌</h2>
+
+    <form onsubmit="searchBus(event)">
+        <input type="text" id="from" placeholder="From City" required>
+        <input type="text" id="to" placeholder="To City" required>
+        <input type="date" required>
+
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div id="results" class="results"></div>
+
+<script>
+function searchBus(event) {
+    event.preventDefault();
+
+    let output = `
+        <div class="card">
+            <h3>Hyderabad → Bangalore</h3>
+            <p>Bus: VRL Travels</p>
+            <p>Seat: Sleeper</p>
+            <p>Price: ₹1200</p>
+            <button onclick="selectSeat()">Select Seat</button>
+        </div>
+    `;
+
+    document.getElementById("results").innerHTML = output;
+}
+
+function selectSeat() {
+    let seats = `
+        <div class="card">
+            <h3>Select Seat 🪑</h3>
+            <button onclick="bookBus('Seat 1', 1200)">Seat 1</button>
+            <button onclick="bookBus('Seat 2', 1200)">Seat 2</button>
+            <button onclick="bookBus('Seat 3', 1200)">Seat 3</button>
+        </div>
+    `;
+
+    document.getElementById("results").innerHTML = seats;
+}
+
+function bookBus(seat, price) {
+    let booking = {
+        airline: "Bus - " + seat,
+        price: price,
+        date: new Date().toLocaleDateString()
+    };
+
+    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    bookings.push(booking);
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+
+    alert("Bus booked successfully ✅");
+}
+</script>
+
+</body>
+</html>

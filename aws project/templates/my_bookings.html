@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Bookings</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="booking-bg">
+
+<div class="header">
+    <div class="logo">TravelGo</div>
+    <a class="logout" href="home.html">Back</a>
+</div>
+
+<div class="welcome">
+    <h2>My Bookings 📄</h2>
+</div>
+
+<div id="bookingList" class="container"></div>
+
+<script>
+let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+let container = document.getElementById("bookingList");
+
+if (bookings.length === 0) {
+    container.innerHTML = "<p>No bookings yet 😢</p>";
+} else {
+    bookings.forEach(b => {
+        container.innerHTML += `
+            <div class="card">
+                <h3>${b.from} → ${b.to}</h3>
+                <p>Airline: ${b.airline}</p>
+                <p>Date: ${b.date}</p>
+                <p>Price: ₹${b.price}</p>
+            </div>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>

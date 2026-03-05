@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TravelGo | Welcome</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background: url('plane.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            color: white;
+            text-align: center;
+        }
+
+        .overlay {
+            background-color: rgba(0,0,0,0.5);
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .navbar {
+            background-color: rgba(13, 71, 161, 0.8);
+            width: 100%;
+            padding: 15px 30px;
+            color: white;
+            font-weight: bold;
+            text-align: left;
+            position: absolute;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            
+            font-size: 60px;
+            font-weight: 900;
+            color: #ffff00;
+            text-shadow: 3px 3px 5px black;
+        }
+        h2 { font-size: 36px;
+             font-weight: 700;
+            color: #fa28b8;
+           }
+        h3 { margin: 5px 0;
+            color: #ffdd57;
+           }
+        h4 { margin: 10px 0; width: 60%; line-height: 1.5;color: rgba(5, 248, 240, 0.981);
+         }
+
+        .btn {
+            margin-top: 30px;
+            padding: 15px 35px;
+            background-color: #0d47a1;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .btn:hover { background-color: #005ed9; }
+
+        @media screen and (max-width: 768px) {
+            h1 { font-size: 36px; }
+            h4 { width: 80%; font-size: 16px; }
+            .btn { font-size: 16px; padding: 12px 25px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay">
+    <div class="navbar">
+        TravelGo – Cloud Powered Booking
+    </div>
+
+    <h1>Smart & Seamless Travel Booking</h1>
+    <h2>WELCOME ABOARD</h2>
+    <h3>Get ready for a journey to spectacular places!</h3>
+    <h4>Book national and international travel with real-time seat reservation. Powered securely using AWS Cloud for fast and reliable experience.</h4>
+    <a href="login.html" class="btn">Click here to Get Started</a>
+</div>
+
+</body>
+</html>

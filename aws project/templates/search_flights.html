@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Flights</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="flights-bg">
+
+<div class="header">
+    <div class="logo">TravelGo</div>
+    <a class="logout" href="home.html">Back</a>
+</div>
+
+<div class="search-container">
+    <h2>Search Flights ✈️</h2>
+
+    <form onsubmit="searchFlights(event)">
+        <input type="text" id="from" placeholder="From City" required>
+        <input type="text" id="to" placeholder="To City" required>
+        <input type="date" id="date" required>
+
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div id="results" class="results"></div>
+
+<script>
+function searchFlights(event) {
+    event.preventDefault();
+
+    let from = document.getElementById("from").value;
+    let to = document.getElementById("to").value;
+    let date = document.getElementById("date").value;
+
+    let results = `
+        <div class="card">
+            <h3>${from} → ${to}</h3>
+            <p>Date: ${date}</p>
+            <p>Airline: Indigo</p>
+            <p>Time: 10:00 AM</p>
+            <p>Price: ₹4500</p>
+            <button onclick="bookFlight('Indigo', 4500)">Book Now</button>
+        </div>
+
+        <div class="card">
+            <h3>${from} → ${to}</h3>
+            <p>Date: ${date}</p>
+            <p>Airline: Air India</p>
+            <p>Time: 2:00 PM</p>
+            <p>Price: ₹5200</p>
+            <button onclick="bookFlight('Air India', 5200)">Book Now</button>
+        </div>
+    `;
+
+    document.getElementById("results").innerHTML = results;
+}
+
+function bookFlight(airline, price) {
+    let booking = {
+        airline: airline,
+        price: price,
+        date: new Date().toLocaleDateString()
+    };
+
+    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    bookings.push(booking);
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+
+    localStorage.setItem("price", price);
+    window.location.href = "payment.html";
+}
+</script>
+
+</body>
+</html>
