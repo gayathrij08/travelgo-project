@@ -11,7 +11,9 @@ app.secret_key = "travelgo_secret"
 
 # ---------------- MONGODB CONNECTION ----------------
 
-client = MongoClient("mongodb+srv://gsdeepika2004_db_user:Deepika%400510@cluster0.htriaig.mongodb.net/?retryWrites=true&w=majority")
+mongo_uri = os.environ.get("MONGO_URI")
+
+client = MongoClient(mongo_uri)
 
 db = client["travelDB"]
 
